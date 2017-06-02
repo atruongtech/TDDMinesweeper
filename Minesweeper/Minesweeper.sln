@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minesweeper", "Minesweeper\Minesweeper.csproj", "{636E660C-46E6-4175-972B-B989B9C093DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minesweeper.Library", "Minesweeper.Library\Minesweeper.Library.csproj", "{B17A3123-5BF2-45BE-88AD-49B3C84748B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minesweeper.Library.Test", "Minesweeper.Library.Test\Minesweeper.Library.Test.csproj", "{74B2195D-BACF-49C0-A2B3-1C9D87067101}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{636E660C-46E6-4175-972B-B989B9C093DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{636E660C-46E6-4175-972B-B989B9C093DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{636E660C-46E6-4175-972B-B989B9C093DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{636E660C-46E6-4175-972B-B989B9C093DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B17A3123-5BF2-45BE-88AD-49B3C84748B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B17A3123-5BF2-45BE-88AD-49B3C84748B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B17A3123-5BF2-45BE-88AD-49B3C84748B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B17A3123-5BF2-45BE-88AD-49B3C84748B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74B2195D-BACF-49C0-A2B3-1C9D87067101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74B2195D-BACF-49C0-A2B3-1C9D87067101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74B2195D-BACF-49C0-A2B3-1C9D87067101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74B2195D-BACF-49C0-A2B3-1C9D87067101}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
