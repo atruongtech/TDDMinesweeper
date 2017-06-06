@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prism.Mvvm;
+using Prism.Commands;
 
 namespace Minesweeper.Library
 {
@@ -13,7 +14,6 @@ namespace Minesweeper.Library
         private int _numNeighborMines;
         private bool _isRevealed;
         private int _tileIndex;
-
 
         #region properties
         public bool IsMine
@@ -42,14 +42,16 @@ namespace Minesweeper.Library
             set { SetProperty<bool>(ref this._isRevealed, value); }
         }
 
+        public DelegateCommand<Tile> RevealCommand { get; set; }
+
         #endregion
 
         public Tile()
         {
-
+            this.RevealCommand = new DelegateCommand<Tile>(Reveal);
         }
 
-        public Tile(int index)
+        public Tile(int index):this()
         {
             this.TileIndex = index;
         }
@@ -64,9 +66,9 @@ namespace Minesweeper.Library
             this.NumNeighborMines = input;
         }
 
-        public void Reveal()
+        public void Reveal(Tile tile)
         {
-            this.IsRevealed = true;
+            tile.IsRevealed = true;
         }
     }
 }

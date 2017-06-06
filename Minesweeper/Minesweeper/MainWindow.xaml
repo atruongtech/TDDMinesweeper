@@ -3,10 +3,76 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mineSweeper="clr-namespace:Minesweeper.Library;assembly=Minesweeper.Library"
+        xmlns:converters="clr-namespace:Minesweeper.Library.Converters;assembly=Minesweeper.Library"
         xmlns:local="clr-namespace:Minesweeper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="Minesweeper" Height="Auto" Width="Auto">
+    
+    
+    <Window.DataContext>
+        <ObjectDataProvider ObjectType="mineSweeper:Gameboard">
+            <ObjectDataProvider.ConstructorParameters>
+                <mineSweeper:DifficultyLevel>
+                    Hard
+                </mineSweeper:DifficultyLevel>
+            </ObjectDataProvider.ConstructorParameters>
+        </ObjectDataProvider>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
+    </Window.Resources>
+    
+    <Grid x:Name="root">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="80"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="3">
+            <ItemsControl ItemsSource="{Binding Tiles}" MinWidth="300" Margin="10,5">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Button Foreground="White"
+                                FontWeight="Bold"
+                                FontSize="16"
+                                Content="{Binding NumNeighborMines}"
+                                Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Normal}"
+                                Height="30"
+                                x:Name="displayLayer">
+
+                            </Button>
+                            <Button 
+                                Height="30"
+                                Command="{Binding RevealCommand}" CommandParameter="{Binding}"
+                                Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Inverted}">
+                                
+                            </Button>
+                        </Grid>                        
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsMine}" Value="True">
+                                <Setter Property="Background" TargetName="displayLayer" Value="Red">                                </Setter>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="{Binding Rows}" Columns="{Binding Columns}" Margin="0"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Grid>
     </Grid>
+
 </Window>
