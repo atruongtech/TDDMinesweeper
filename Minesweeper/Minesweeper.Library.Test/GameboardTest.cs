@@ -154,5 +154,96 @@ namespace Minesweeper.Library.Test
             Assert.AreEqual(2, boardTiles[7].NumNeighborMines);
             Assert.AreEqual(2, boardTiles[11].NumNeighborMines);
         }
+
+        [Test]
+        public void RevealTiles_Sets_IsRevealed_On0_AndNeighbors()
+        {
+            /* 1 1 1 - -
+             * 1 m 2 1 -
+             * 1 2 m 1 -
+             * - 1 1 1 -
+             * - - - - -
+             */
+
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            board.Columns = 5;
+            board.Rows = 5;
+            board.Tiles = new List<Tile>();
+            for (int i = 0; i < 25; i++)
+            {
+                board.Tiles.Add(new Tile(i));
+            }
+
+            board.Tiles[6].IsMine = true;
+            board.Tiles[12].IsMine = true;
+            Gameboard.SetNeighborMineCounts(board.Tiles, board.Columns);
+
+            board.RevealTiles(board.Tiles[24]);
+
+            int revealedCount = 0;
+            foreach(Tile tile in board.Tiles)
+            {
+                if (tile.IsRevealed)
+                    revealedCount++;
+            }
+
+            Assert.AreEqual(20, revealedCount);
+        }
+
+        [Test]
+        public void RevealTiles_Sets_IsRevealed_OnlyOnTile()
+        {
+            /* 1 1 1 - -
+             * 1 m 2 1 -
+             * 1 2 m 1 -
+             * - 1 1 2 1
+             * - - - 1 m
+             */
+
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            board.Columns = 5;
+            board.Rows = 5;
+            board.Tiles = new List<Tile>();
+            for (int i = 0; i < 25; i++)
+            {
+                board.Tiles.Add(new Tile(i));
+            }
+
+            board.Tiles[6].IsMine = true;
+            board.Tiles[12].IsMine = true;
+            board.Tiles[24].IsMine = true;
+            Gameboard.SetNeighborMineCounts(board.Tiles, board.Columns);
+
+            board.RevealTiles(board.Tiles[18]);
+
+            int revealedCount = 0;
+            foreach (Tile tile in board.Tiles)
+            {
+                if (tile.IsRevealed)
+                    revealedCount++;
+            }
+
+            Assert.AreEqual(1, revealedCount);
+
+
+            board.Tiles[18].IsRevealed = false;
+
+            board.RevealTiles(board.Tiles[24]);
+            revealedCount = 0;
+            foreach (Tile tile in board.Tiles)
+            {
+                if (tile.IsRevealed)
+                    revealedCount++;
+            }
+
+            Assert.AreEqual(1, revealedCount);
+        }
+
+        [Test]
+        public void Constructor_Sets_RevealCommand()
+        {
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            Assert.IsNotNull(board.RevealCommand);
+        }
     }
 }

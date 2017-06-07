@@ -7,14 +7,14 @@
         xmlns:converters="clr-namespace:Minesweeper.Library.Converters;assembly=Minesweeper.Library"
         xmlns:local="clr-namespace:Minesweeper"
         mc:Ignorable="d"
-        Title="Minesweeper" Height="Auto" Width="Auto">
+        Title="Minesweeper" Height="Auto">
     
     
     <Window.DataContext>
         <ObjectDataProvider ObjectType="mineSweeper:Gameboard">
             <ObjectDataProvider.ConstructorParameters>
                 <mineSweeper:DifficultyLevel>
-                    Hard
+                    Easy
                 </mineSweeper:DifficultyLevel>
             </ObjectDataProvider.ConstructorParameters>
         </ObjectDataProvider>
@@ -23,13 +23,24 @@
     <Window.Resources>
         <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
+        <converters:TileNumberColorConverter x:Key="TileNumberColorConverter"/>
+        <Style TargetType="TextBlock" x:Key="numberTile">
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <Binding Path="Text" RelativeSource="{RelativeSource Self}">
+                        <Binding.Converter>
+                            <converters:TileNumberColorConverter/>
+                        </Binding.Converter>
+                    </Binding>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     
     <Grid x:Name="root">
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="80"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -39,29 +50,44 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Row="1" Grid.ColumnSpan="3">
-            <ItemsControl ItemsSource="{Binding Tiles}" MinWidth="300" Margin="10,5">
+            <ItemsControl ItemsSource="{Binding Tiles}" Margin="10,5">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Button Foreground="White"
-                                FontWeight="Bold"
-                                FontSize="16"
-                                Content="{Binding NumNeighborMines}"
-                                Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Normal}"
-                                Height="30"
-                                x:Name="displayLayer">
-
-                            </Button>
+                        <Grid x:Name="container">
+                            <Border BorderThickness="1" BorderBrush="Black">
+                                <TextBlock
+                                    Style="{StaticResource numberTile}"
+                                    FontWeight="Bold"
+                                    FontSize="16"
+                                    Text="{Binding NumNeighborMines}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Normal}"
+                                    x:Name="displayLayer">
+                                </TextBlock>
+                            </Border>
+                            
                             <Button 
-                                Height="30"
-                                Command="{Binding RevealCommand}" CommandParameter="{Binding}"
+                                Command="{Binding Path=DataContext.ObjectInstance.RevealCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
+                                CommandParameter="{Binding}"
                                 Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Inverted}">
-                                
                             </Button>
                         </Grid>                        
                         <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding NumNeighborMines}" Value="0">
+                                <Setter Property="Background" TargetName="container" Value="Green"></Setter>
+                            </DataTrigger>
+                            
                             <DataTrigger Binding="{Binding IsMine}" Value="True">
-                                <Setter Property="Background" TargetName="displayLayer" Value="Red">                                </Setter>
+                                <Setter Property="Background" TargetName="container" Value="Red"/>
+                                <Setter Property="Text" TargetName="displayLayer" Value=" "/>
+                                <Setter Property="Background" TargetName="displayLayer">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="mine.jpg" Stretch="UniformToFill"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Width" TargetName="displayLayer" Value="60"/>
+                                <Setter Property="Height" TargetName="displayLayer" Value="60"/>
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>

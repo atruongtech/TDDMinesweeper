@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\TileNumberColorConverter.cs" />
     <Compile Include="DifficultySetting.cs" />
     <Compile Include="Gameboard.cs" />
     <Compile Include="Converters\InvertedBoolConverter.cs" />

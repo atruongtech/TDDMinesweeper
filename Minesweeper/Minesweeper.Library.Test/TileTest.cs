@@ -44,16 +44,10 @@ namespace Minesweeper.Library.Test
         public void Reveal_Sets_IsRevealed_True()
         {
             Tile tile = new Tile();
-            tile.Reveal(tile);
+            tile.Reveal();
 
             Assert.IsTrue(tile.IsRevealed);
         }
-
-        [Test]
-        public void IndexConstructor_Calls_BaseConstructor()
-        {
-            Tile tile = new Tile(0);
-            Assert.IsNotNull(tile.RevealCommand);
-        }
+        
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prism.Mvvm;
+using Prism.Commands;
 
 namespace Minesweeper.Library
 {
@@ -38,9 +39,21 @@ namespace Minesweeper.Library
             get { return _settings; }
             set { SetProperty(ref this._settings, value); }
         }
+
+        public DelegateCommand<Tile> RevealCommand
+        {
+            get;
+            private set;
+        }
+        
         #endregion
 
-        public Gameboard(DifficultyLevel level)
+        public Gameboard()
+        {
+            this.RevealCommand = new DelegateCommand<Tile>(RevealTiles);
+        }
+
+        public Gameboard(DifficultyLevel level) : this()
         {
             this.Settings = new DifficultySetting(level);
 
@@ -113,6 +126,29 @@ namespace Minesweeper.Library
 
             return neighbors;
 
+        }
+
+        public void RevealTiles(Tile tile)
+        {
+            tile.Reveal();
+            if (tile.NumNeighborMines == 0 && !tile.IsMine)
+            {
+                Queue<Tile> checkQueue = new Queue<Tile>();
+                checkQueue.Enqueue(tile);
+                while (checkQueue.Count > 0)
+                {
+                    Tile neighbor = checkQueue.Dequeue();
+                    neighbor.Reveal();
+                    if (neighbor.NumNeighborMines == 0)
+                    {
+                        foreach(Tile newNeighbor in Gameboard.GetAllNeighbors(neighbor.TileIndex, this.Tiles, this.Columns))
+                        {
+                            if (!newNeighbor.IsRevealed)
+                                checkQueue.Enqueue(newNeighbor);
+                        }
+                    }
+                }
+            }
         }
 
         private void PopulateTiles()

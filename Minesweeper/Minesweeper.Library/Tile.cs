@@ -42,13 +42,10 @@ namespace Minesweeper.Library
             set { SetProperty<bool>(ref this._isRevealed, value); }
         }
 
-        public DelegateCommand<Tile> RevealCommand { get; set; }
-
         #endregion
 
         public Tile()
         {
-            this.RevealCommand = new DelegateCommand<Tile>(Reveal);
         }
 
         public Tile(int index):this()
@@ -66,9 +63,9 @@ namespace Minesweeper.Library
             this.NumNeighborMines = input;
         }
 
-        public void Reveal(Tile tile)
+        public void Reveal()
         {
-            tile.IsRevealed = true;
+            this.IsRevealed = true;
         }
     }
 }
