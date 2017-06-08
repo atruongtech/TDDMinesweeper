@@ -126,7 +126,7 @@
                             <DataTrigger Binding="{Binding IsMarked}" Value="True">
                                 <Setter Property="Background" TargetName="cover">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/assets/images/flag.png" Stretch="None"/>
+                                        <ImageBrush ImageSource="/assets/images/flag.png" Stretch="UniformToFill"/>
                                     </Setter.Value>
                                 </Setter>
                                 <Setter Property="Background" TargetName="container" Value="#dddddd"/>

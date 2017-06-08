@@ -26,7 +26,12 @@ namespace Minesweeper
         public MainWindow()
         {
             InitializeComponent();
-            
+
+            PromptForNewGame();
+        }
+
+        public void PromptForNewGame()
+        {
             if (!ShowNewGameDialog())
                 Application.Current.Shutdown();
         }
@@ -91,7 +96,7 @@ namespace Minesweeper
             switch (results)
             {
                 case MessageBoxResult.Yes:
-                    ShowNewGameDialog();
+                    PromptForNewGame();
                     break;
                 case MessageBoxResult.No:
                     Application.Current.Shutdown();
