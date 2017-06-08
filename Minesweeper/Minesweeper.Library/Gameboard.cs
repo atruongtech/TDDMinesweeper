@@ -12,8 +12,13 @@ namespace Minesweeper.Library
     {
         private int _rows;
         private int _columns;
+        private int _numMines;
         private List<Tile> _tiles;
         private DifficultySetting _settings;
+        private bool _gameOver;
+        private bool _win;
+
+        private int _tilesLeft;
 
         #region properties
         public int Rows
@@ -34,10 +39,28 @@ namespace Minesweeper.Library
             set { SetProperty(ref this._tiles, value); }
         }
 
+        public int NumMines
+        {
+            get { return _numMines; }
+            set { SetProperty(ref this._numMines, value); }
+        }
+
         public DifficultySetting Settings
         {
             get { return _settings; }
             set { SetProperty(ref this._settings, value); }
+        }
+
+        public bool GameOver
+        {
+            get { return _gameOver; }
+            set { SetProperty(ref this._gameOver, value); }
+        }
+
+        public bool Win
+        {
+            get { return _win; }
+            set { SetProperty(ref this._win, value); }
         }
 
         public DelegateCommand<Tile> RevealCommand
@@ -46,11 +69,22 @@ namespace Minesweeper.Library
             private set;
         }
         
+        public DelegateCommand<Tile> ToggleTileMarkedCommand
+        {
+            get;
+            private set;
+        }
+
+        
+
         #endregion
 
         public Gameboard()
         {
             this.RevealCommand = new DelegateCommand<Tile>(RevealTiles);
+            this.ToggleTileMarkedCommand = new DelegateCommand<Tile>(ToggleTileMarked);
+
+            this.GameOver = false;
         }
 
         public Gameboard(DifficultyLevel level) : this()
@@ -62,6 +96,7 @@ namespace Minesweeper.Library
             PopulateTiles();
             SeedMines();
             SetNeighborMineCounts(this.Tiles, this.Columns);
+
         }
 
         public static void SetNeighborMineCounts(List<Tile> tiles, int columns)
@@ -130,7 +165,18 @@ namespace Minesweeper.Library
 
         public void RevealTiles(Tile tile)
         {
+            if (tile.IsMarked)
+                return;
+
             tile.Reveal();
+            this._tilesLeft--;
+
+            if (tile.IsMine)
+            {
+                this.GameOver = true;
+                return;
+            }
+
             if (tile.NumNeighborMines == 0 && !tile.IsMine)
             {
                 Queue<Tile> checkQueue = new Queue<Tile>();
@@ -138,17 +184,38 @@ namespace Minesweeper.Library
                 while (checkQueue.Count > 0)
                 {
                     Tile neighbor = checkQueue.Dequeue();
-                    neighbor.Reveal();
+
+                    if (!neighbor.IsRevealed)
+                    {
+                        neighbor.Reveal();
+                        this._tilesLeft--;
+                    }                    
+
                     if (neighbor.NumNeighborMines == 0)
                     {
                         foreach(Tile newNeighbor in Gameboard.GetAllNeighbors(neighbor.TileIndex, this.Tiles, this.Columns))
                         {
-                            if (!newNeighbor.IsRevealed)
+                            if (!newNeighbor.IsRevealed && !checkQueue.Contains(newNeighbor))
                                 checkQueue.Enqueue(newNeighbor);
                         }
                     }
                 }
             }
+
+            if (this._tilesLeft == this.Settings.Mines)
+                this.Win = true;
+        }
+
+        public void ToggleTileMarked(Tile tile)
+        {
+            if (tile.IsMarked)
+                this.NumMines++;
+            else if (this.NumMines < 1)
+                return;
+            else
+                this.NumMines--;
+
+            tile.ToggleMark();
         }
 
         private void PopulateTiles()
@@ -157,20 +224,21 @@ namespace Minesweeper.Library
             {
                 this.Tiles.Add(new Tile(i));
             }
+            this._tilesLeft = this.Rows * this.Columns;
         }
 
         private void SeedMines()
         {
             Random rng = new Random();
-            int nMines = 0;
+            this.NumMines = 0;
 
-            while (nMines < this.Settings.Mines)
+            while (this.NumMines < this.Settings.Mines)
             {
-                int position = rng.Next(0, this.Rows * this.Columns);
+                int position = rng.Next(0, (this.Rows * this.Columns));
                 if (!this.Tiles[position].IsMine)
                 {
                     this.Tiles[position].IsMine = true;
-                    nMines++;
+                    this.NumMines++;
                 }
             }            
         }

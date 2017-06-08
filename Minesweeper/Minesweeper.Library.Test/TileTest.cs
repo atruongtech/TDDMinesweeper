@@ -32,12 +32,12 @@ namespace Minesweeper.Library.Test
 
         [Test]
         public void SetNeighborMines_Sets_NumNeighborMines(
-            [Values(0,1, 2, 3, 4, 5, 6, 7, 8)] int input)
+            [Values(0, 1, 2, 3, 4, 5, 6, 7, 8)] int input)
         {
             Tile tile = new Tile();
 
             tile.SetNeighborMines(input);
-            Assert.AreEqual(input, tile.NumNeighborMines);            
+            Assert.AreEqual(input, tile.NumNeighborMines);
         }
 
         [Test]
@@ -47,6 +47,19 @@ namespace Minesweeper.Library.Test
             tile.Reveal();
 
             Assert.IsTrue(tile.IsRevealed);
+        }
+
+        [Test]
+        public void ToggleMark_Toggles_IsMarked()
+        {
+            Tile tile = new Tile();
+            Assert.IsFalse(tile.IsMarked);
+
+            tile.ToggleMark();
+            Assert.IsTrue(tile.IsMarked);
+
+            tile.ToggleMark();
+            Assert.IsFalse(tile.IsMarked);
         }
         
     }

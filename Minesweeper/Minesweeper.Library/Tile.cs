@@ -11,9 +11,11 @@ namespace Minesweeper.Library
     public class Tile : BindableBase
     {
         private bool _isMine;
-        private int _numNeighborMines;
+        private bool _isMarked;
         private bool _isRevealed;
-        private int _tileIndex;
+
+        private int _numNeighborMines;        
+        private int _tileIndex;        
 
         #region properties
         public bool IsMine
@@ -42,10 +44,18 @@ namespace Minesweeper.Library
             set { SetProperty<bool>(ref this._isRevealed, value); }
         }
 
+        public bool IsMarked
+        {
+            get { return _isMarked; }
+            set { SetProperty<bool>(ref this._isMarked, value); }
+        }
+
         #endregion
 
         public Tile()
         {
+            this.IsRevealed = false;
+            this.IsMarked = false;
         }
 
         public Tile(int index):this()
@@ -66,6 +76,11 @@ namespace Minesweeper.Library
         public void Reveal()
         {
             this.IsRevealed = true;
+        }
+
+        public void ToggleMark()
+        {
+            this.IsMarked = !this.IsMarked;
         }
     }
 }

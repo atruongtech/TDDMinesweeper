@@ -2,6 +2,8 @@
 using NUnit.Framework;
 using Minesweeper.Library;
 using System.Collections.Generic;
+using Prism.Mvvm;
+using System.ComponentModel;
 
 namespace Minesweeper.Library.Test
 {
@@ -244,6 +246,109 @@ namespace Minesweeper.Library.Test
         {
             Gameboard board = new Gameboard(DifficultyLevel.Easy);
             Assert.IsNotNull(board.RevealCommand);
+        }
+        
+        [Test]
+        public void Constructor_Sets_NumMines_Appropriately(
+            [Values(DifficultyLevel.Easy, 
+            DifficultyLevel.Medium, 
+            DifficultyLevel.Hard)] DifficultyLevel level)
+        {
+            DifficultySetting setting = new DifficultySetting(level);
+            Gameboard board = new Gameboard(level);
+
+            Assert.AreEqual(board.NumMines, setting.Mines);
+        }
+
+        [Test]
+        public void ToggleTileMarked_Sets_NumMines_Appropriately()
+        {
+            DifficultySetting setting = new DifficultySetting(DifficultyLevel.Easy);
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            board.ToggleTileMarked(board.Tiles[1]);
+
+            Assert.AreEqual(setting.Mines - 1, board.NumMines);
+
+            board.ToggleTileMarked(board.Tiles[1]);
+            Assert.AreEqual(setting.Mines, board.NumMines);
+        }
+
+        [Test]
+        public void ToggleTileMarked_DoesNot_Set_Marked_If_NoMinesLeft()
+        {
+            DifficultySetting setting = new DifficultySetting(DifficultyLevel.Easy);
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+
+            board.NumMines = 0;
+            Assert.IsFalse(board.Tiles[1].IsMarked);
+
+            board.ToggleTileMarked(board.Tiles[1]);
+            Assert.IsFalse(board.Tiles[1].IsMarked);
+            Assert.Zero(board.NumMines);
+        }
+
+        [Test]
+        public void RevealTile_DoesNot_Set_IsRevealed_If_IsMarked()
+        {
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            board.ToggleTileMarked(board.Tiles[1]);
+
+            board.RevealTiles(board.Tiles[1]);
+            Assert.IsFalse(board.Tiles[1].IsRevealed);
+        }
+
+        [Test]
+        public void RevealMine_Sets_GameOver_True()
+        {
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            board.Tiles[1].SetIsMine();
+
+            board.RevealTiles(board.Tiles[1]);
+            Assert.IsTrue(board.Tiles[1].IsRevealed);
+            Assert.IsTrue(board.GameOver);
+        }
+
+        [Test]
+        public void PropertyChanged_EventFires_When_GameOver_Set_True()
+        {
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            bool eventFired = false;
+            ((BindableBase)board).PropertyChanged += 
+                new PropertyChangedEventHandler((s, e) => { if (e.PropertyName == "GameOver") { eventFired = true; } });
+
+            board.GameOver = true;
+            Assert.AreEqual(true, eventFired);
+        }
+
+        [Test]
+        public void RevealAllNonMineTiles_Sets_Win_True()
+        {
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            foreach(Tile tile in board.Tiles)
+            {
+                if (!tile.IsMine)
+                    board.RevealTiles(tile);
+            }
+            Assert.IsTrue(board.Win);
+        }
+
+        [Test]
+        public void PropertyChanged_EventFires_When_Win_Set_True()
+        {
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            bool eventFired = false;
+            ((BindableBase)board).PropertyChanged +=
+                new PropertyChangedEventHandler(
+                    (s, e) =>
+                    {
+                        if (e.PropertyName == "Win")
+                        {
+                            eventFired = true;
+                        }
+                    });
+
+            board.Win = true;
+            Assert.AreEqual(true, eventFired);
         }
     }
 }
