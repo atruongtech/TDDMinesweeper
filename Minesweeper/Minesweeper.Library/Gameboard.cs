@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Prism.Mvvm;
 using Prism.Commands;
+using System.Timers;
 
 namespace Minesweeper.Library
 {
@@ -17,6 +18,8 @@ namespace Minesweeper.Library
         private DifficultySetting _settings;
         private bool _gameOver;
         private bool _win;
+        private int _playTime;
+        private Timer _timer;
 
         private int _tilesLeft;
 
@@ -63,6 +66,12 @@ namespace Minesweeper.Library
             set { SetProperty(ref this._win, value); }
         }
 
+        public int PlayTime
+        {
+            get { return _playTime; }
+            set { SetProperty(ref this._playTime, value); }
+        }
+
         public DelegateCommand<Tile> RevealCommand
         {
             get;
@@ -96,7 +105,7 @@ namespace Minesweeper.Library
             PopulateTiles();
             SeedMines();
             SetNeighborMineCounts(this.Tiles, this.Columns);
-
+            StartPlayTimer();
         }
 
         public static void SetNeighborMineCounts(List<Tile> tiles, int columns)
@@ -173,7 +182,7 @@ namespace Minesweeper.Library
 
             if (tile.IsMine)
             {
-                this.GameOver = true;
+                EndGame(false);
                 return;
             }
 
@@ -203,7 +212,7 @@ namespace Minesweeper.Library
             }
 
             if (this._tilesLeft == this.Settings.Mines)
-                this.Win = true;
+                EndGame(true);
         }
 
         public void ToggleTileMarked(Tile tile)
@@ -247,6 +256,29 @@ namespace Minesweeper.Library
         {
             this.Rows = rows;
             this.Columns = columns;
+        }
+
+        private void StartPlayTimer()
+        {
+            this._timer = new Timer(1000);
+            this._timer.Elapsed += ((s, e) => { this.PlayTime++; });
+            this._timer.Enabled = true;
+            this._timer.Start();
+        }
+
+        private void StopPlayTimer()
+        {
+            this._timer.Stop();
+            this._timer.Dispose();
+        }
+
+        private void EndGame(bool win)
+        {
+            StopPlayTimer();
+            if (win)
+                this.Win = true;
+            else
+                this.GameOver = true;
         }
     }
 }

@@ -128,5 +128,8 @@
   <ItemGroup>
     <Resource Include="assets\images\mine.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="assets\images\timer.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

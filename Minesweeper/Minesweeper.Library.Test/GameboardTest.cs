@@ -350,5 +350,13 @@ namespace Minesweeper.Library.Test
             board.Win = true;
             Assert.AreEqual(true, eventFired);
         }
+
+        [Test]
+        public void PlayTimer_Sets_PlayTime()
+        {
+            Gameboard board = new Gameboard(DifficultyLevel.Easy);
+            System.Threading.Thread.Sleep(4000);
+            Assert.NotZero(board.PlayTime);
+        }
     }
 }
