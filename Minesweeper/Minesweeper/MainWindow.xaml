@@ -49,7 +49,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Image Source="/assets/images/mine.png" Width="65" Margin="10,4,10,0"/>
+            <Image Source="/assets/images/mine.png" Width="65" Margin="10,3,10,-1" Stretch="UniformToFill"/>
             <TextBlock Grid.Column="0" Grid.Row="0"
                 Text="{Binding NumMines}"
                 VerticalAlignment="Center"
@@ -57,8 +57,8 @@
         </StackPanel>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Image Source="/assets/images/timer.png" Width="50" Margin="0,4,10,0"/>
-            <TextBlock Text="{Binding PlayTime}" VerticalAlignment="Center" FontSize="30" Height="40" Margin="0,10,20,0"/>
+            <Image Source="/assets/images/timer.png" Width="50" Margin="0,4,10,0" Stretch="Uniform"/>
+            <TextBlock Text="{Binding PlayTime}" TextAlignment="Right" VerticalAlignment="Center" FontSize="30" Height="40" Width="50" Margin="0,10,40,10"/>
         </StackPanel>
         
         <Grid Grid.Row="1" Grid.ColumnSpan="3">
@@ -66,7 +66,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid x:Name="container">
-                            <Border BorderThickness="1" BorderBrush="Black">
+                            <Border BorderThickness="2" BorderBrush="Black">
                                 <TextBlock
                                     Style="{StaticResource numberTile}"
                                     FontWeight="Bold"
@@ -94,11 +94,12 @@
                                     </Style>
                                 </Border.Style>
                                 <Button 
-                                Style="{StaticResource tileCover}"
-                                Command="{Binding Path=DataContext.RevealCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
-                                CommandParameter="{Binding}"
-                                Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Inverted}"
-                                x:Name="cover">
+                                   Style="{StaticResource tileCover}"
+                                   Command="{Binding Path=DataContext.RevealCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
+                                   CommandParameter="{Binding}"
+                                   Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Inverted}"
+                                   x:Name="cover"
+                                 >
                                     <Button.InputBindings>
                                         <MouseBinding Gesture="RightClick" Command="{Binding Path=DataContext.ToggleTileMarkedCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
                                                     CommandParameter="{Binding}"/>

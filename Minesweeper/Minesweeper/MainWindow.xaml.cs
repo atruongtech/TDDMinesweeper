@@ -56,15 +56,15 @@ namespace Minesweeper
             {
                 case DifficultyLevel.Easy:
                     this.Height = 475;
-                    this.Width = 425;
+                    this.Width = 550;
                     break;
                 case DifficultyLevel.Medium:
                     this.Height = 830;
-                    this.Width = 860;
+                    this.Width = 1000;
                     break;
                 case DifficultyLevel.Hard:
                     this.Height = 900;
-                    this.Width = 1000;
+                    this.Width = 1300;
                     break;
                 default:
                     break;
