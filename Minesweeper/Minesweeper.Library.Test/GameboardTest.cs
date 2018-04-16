@@ -1,13 +1,11 @@
-﻿using System;
-using NUnit.Framework;
-using Minesweeper.Library;
+﻿using NUnit.Framework;
 using System.Collections.Generic;
 using Prism.Mvvm;
 using System.ComponentModel;
 
 namespace Minesweeper.Library.Test
 {
-    [TestFixture]
+   [TestFixture]
     public class GameboardTest
     {
         [Test]

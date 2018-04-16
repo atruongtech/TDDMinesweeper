@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prism.Mvvm;
-using Prism.Commands;
+﻿using Prism.Mvvm;
 
 namespace Minesweeper.Library
 {
-    public class Tile : BindableBase
+   public class Tile : BindableBase
     {
         private bool _isMine;
         private bool _isMarked;

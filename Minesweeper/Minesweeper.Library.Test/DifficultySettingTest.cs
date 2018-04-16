@@ -1,6 +1,4 @@
-﻿using System;
-using NUnit.Framework;
-using Minesweeper.Library;
+﻿using NUnit.Framework;
 
 namespace Minesweeper.Library.Test
 {
