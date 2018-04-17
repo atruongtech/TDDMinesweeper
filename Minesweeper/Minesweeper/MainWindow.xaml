@@ -65,18 +65,26 @@
             <ItemsControl ItemsSource="{Binding Tiles}" Margin="10,5">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
+                       
                         <Grid x:Name="container">
                             <Border BorderThickness="2" BorderBrush="Black">
-                                <TextBlock
-                                    Style="{StaticResource numberTile}"
-                                    FontWeight="Bold"
-                                    FontSize="16"
-                                    Text="{Binding NumNeighborMines}"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Normal}"
-                                    x:Name="displayLayer">
-                                </TextBlock>
+                              <TextBlock
+                                 Style="{StaticResource numberTile}"
+                                 FontWeight="Bold"
+                                 FontSize="16"
+                                 Text="{Binding NumNeighborMines}"
+                                 TextAlignment="Center"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center"
+                                 Visibility="{Binding IsRevealed, Converter={StaticResource BoolToVisConverter}, ConverterParameter=Normal}"
+                                 x:Name="displayLayer">
+                                 <TextBlock.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick" 
+                                                  Command="{Binding Path=DataContext.QuickRevealNeighborsCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                  CommandParameter="{Binding}">
+                                    </MouseBinding>
+                           </TextBlock.InputBindings>
+                              </TextBlock>
                             </Border>
                             
                             <Border x:Name="coverBorder"
@@ -123,6 +131,7 @@
                                         <ImageBrush ImageSource="/assets/images/mine.png" Stretch="UniformToFill"/>
                                     </Setter.Value>
                                 </Setter>
+                                <Setter Property="HorizontalAlignment" TargetName="displayLayer" Value="Center"/>
                                 <Setter Property="Width" TargetName="displayLayer" Value="60"/>
                                 <Setter Property="Height" TargetName="displayLayer" Value="60"/>
                             </DataTrigger>

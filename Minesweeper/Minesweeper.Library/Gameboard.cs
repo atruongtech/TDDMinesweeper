@@ -70,17 +70,11 @@ namespace Minesweeper.Library
          set { SetProperty(ref this._playTime, value); }
       }
 
-      public DelegateCommand<Tile> RevealCommand
-      {
-         get;
-         private set;
-      }
+      public DelegateCommand<Tile> RevealCommand { get; private set; }
 
-      public DelegateCommand<Tile> ToggleTileMarkedCommand
-      {
-         get;
-         private set;
-      }
+      public DelegateCommand<Tile> ToggleTileMarkedCommand { get; private set; }
+
+      public DelegateCommand<Tile> QuickRevealNeighborsCommand { get; private set; }
 
 
 
@@ -90,6 +84,7 @@ namespace Minesweeper.Library
       {
          this.RevealCommand = new DelegateCommand<Tile>(RevealTiles);
          this.ToggleTileMarkedCommand = new DelegateCommand<Tile>(ToggleTileMarked);
+         this.QuickRevealNeighborsCommand = new DelegateCommand<Tile>(QuickRevealNeighbors);
 
          this.GameOver = false;
       }
@@ -172,7 +167,7 @@ namespace Minesweeper.Library
 
       public void RevealTiles(Tile tile)
       {
-         if (tile.IsMarked)
+         if (tile.IsMarked || tile.IsRevealed)
             return;
 
          tile.Reveal();
@@ -223,6 +218,19 @@ namespace Minesweeper.Library
             this.NumMines--;
 
          tile.ToggleMark();
+      }
+
+      public void QuickRevealNeighbors(Tile tile)
+      {
+         var allNeighbors = GetAllNeighbors(tile.TileIndex, this.Tiles, this.Columns);
+         if (tile.NumNeighborMines == allNeighbors.Count(t => t.IsMarked))
+         {
+            var tilesToReveal = allNeighbors.Where(t => !t.IsMarked && !t.IsRevealed);
+            foreach (var toReveal in tilesToReveal)
+            {
+               RevealTiles(toReveal);
+            }
+         }
       }
 
       private void PopulateTiles()
