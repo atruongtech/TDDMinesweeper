@@ -53,28 +53,27 @@ namespace Minesweeper
                     this.Height = 900;
                     this.Width = 1300;
                     break;
-                default:
-                    break;
             }
             this.Hide();
-            this.DataContext = new Gameboard(level);
-            ((BindableBase)this.DataContext).PropertyChanged +=
-                new PropertyChangedEventHandler(
-                    (s, e) =>
-                    {
-                        if (e.PropertyName == "GameOver")
-                        {
-                            ShowGameOverScreen();
-                        }
-                        else if (e.PropertyName == "Win")
-                        {
-                            ShowWinScreen();
-                        }
-                    });
+
+            var board = new Gameboard(level, new NeighboringTileFinder());
+            board.InitializeGameBoard();
+            board.StartGame();
+            this.DataContext = board;
+
+            ((BindableBase)this.DataContext).PropertyChanged += GameEndDelegate;
             this.Show();
         }
 
-        public void ShowMessageBox(string message, string caption)
+       private void GameEndDelegate(object sender, PropertyChangedEventArgs e)
+       {
+             if (e.PropertyName == "GameOver")
+                ShowGameOverScreen();
+             else if (e.PropertyName == "Win")
+                ShowWinScreen();
+       }
+
+       public void ShowMessageBox(string message, string caption)
         {
             MessageBoxButton buttons = MessageBoxButton.YesNo;
             MessageBoxImage icon = MessageBoxImage.Question;

@@ -59,6 +59,8 @@
     <Compile Include="DifficultySetting.cs" />
     <Compile Include="Gameboard.cs" />
     <Compile Include="Converters\InvertedBoolConverter.cs" />
+    <Compile Include="INeighboringTileFinder.cs" />
+    <Compile Include="NeighboringTileFinder.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

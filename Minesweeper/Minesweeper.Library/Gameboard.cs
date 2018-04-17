@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Prism.Mvvm;
 using Prism.Commands;
 using System.Timers;
@@ -20,6 +21,7 @@ namespace Minesweeper.Library
       private Timer _timer;
 
       private int _tilesLeft;
+      private readonly INeighboringTileFinder _neighboringTileFinder;
 
       #region properties
       public int Rows
@@ -76,12 +78,11 @@ namespace Minesweeper.Library
 
       public DelegateCommand<Tile> QuickRevealNeighborsCommand { get; private set; }
 
-
-
       #endregion
 
-      public Gameboard()
+      public Gameboard(INeighboringTileFinder neighboringTileFinder)
       {
+         _neighboringTileFinder = neighboringTileFinder;
          this.RevealCommand = new DelegateCommand<Tile>(RevealTiles);
          this.ToggleTileMarkedCommand = new DelegateCommand<Tile>(ToggleTileMarked);
          this.QuickRevealNeighborsCommand = new DelegateCommand<Tile>(QuickRevealNeighbors);
@@ -89,19 +90,27 @@ namespace Minesweeper.Library
          this.GameOver = false;
       }
 
-      public Gameboard(DifficultyLevel level) : this()
+      public Gameboard(DifficultyLevel level, INeighboringTileFinder neighboringTileFinder) : this(neighboringTileFinder)
       {
          this.Settings = new DifficultySetting(level);
 
          Tiles = new List<Tile>();
          SetDimensions(this.Settings.Rows, this.Settings.Columns);
+      }
+
+      public void InitializeGameBoard()
+      {
          PopulateTiles();
          SeedMines();
+      }
+
+      public void StartGame()
+      {
          SetNeighborMineCounts(this.Tiles, this.Columns);
          StartPlayTimer();
       }
 
-      public static void SetNeighborMineCounts(List<Tile> tiles, int columns)
+      public void SetNeighborMineCounts(List<Tile> tiles, int columns)
       {
          List<Tile> neighbors;
 
@@ -109,60 +118,11 @@ namespace Minesweeper.Library
          {
             if (tile.IsMine)
             {
-               neighbors = Gameboard.GetAllNeighbors(tile.TileIndex, tiles, columns);
+               neighbors = _neighboringTileFinder.GetAllNeighbors(tile.TileIndex, tiles, columns);
                foreach (Tile neighbor in neighbors)
                   neighbor.NumNeighborMines = neighbor.NumNeighborMines + 1;
             }
          }
-      }
-
-      public static List<Tile> GetAllNeighbors(int index, List<Tile> tiles, int columns)
-      {
-         List<Tile> neighbors = new List<Tile>();
-
-         // top, middle, bottom
-         // left, middle, right
-         int tl = index - columns - 1;
-         int tm = index - columns;
-         int tr = index - columns + 1;
-
-         int ml = index - 1;
-         int mr = index + 1;
-
-         int bl = index + columns - 1;
-         int bm = index + columns;
-         int br = index + columns + 1;
-
-         // index is not the first column
-         // and neighbor is a valid index
-         if (index % columns > 0 && tl >= 0)
-            neighbors.Add(tiles[tl]);
-
-         if (tm >= 0)
-            neighbors.Add(tiles[tm]);
-
-         // index is not in last column
-         // and neighbor is a valid index
-         if (index % columns < (columns - 1) && tr >= 0)
-            neighbors.Add(tiles[tr]);
-
-         if (index % columns > 0)
-            neighbors.Add(tiles[ml]);
-
-         if (index % columns < (columns - 1))
-            neighbors.Add(tiles[mr]);
-
-         if (index % columns > 0 && bl < (tiles.Count))
-            neighbors.Add(tiles[bl]);
-
-         if (bm < tiles.Count)
-            neighbors.Add(tiles[bm]);
-
-         if (index % columns < (columns - 1) && br < (tiles.Count))
-            neighbors.Add(tiles[br]);
-
-         return neighbors;
-
       }
 
       public void RevealTiles(Tile tile)
@@ -195,7 +155,7 @@ namespace Minesweeper.Library
 
                if (neighbor.NumNeighborMines == 0)
                {
-                  foreach (Tile newNeighbor in Gameboard.GetAllNeighbors(neighbor.TileIndex, this.Tiles, this.Columns))
+                  foreach (Tile newNeighbor in _neighboringTileFinder.GetAllNeighbors(neighbor.TileIndex, this.Tiles, this.Columns))
                   {
                      if (!newNeighbor.IsRevealed && !checkQueue.Contains(newNeighbor))
                         checkQueue.Enqueue(newNeighbor);
@@ -222,7 +182,7 @@ namespace Minesweeper.Library
 
       public void QuickRevealNeighbors(Tile tile)
       {
-         var allNeighbors = GetAllNeighbors(tile.TileIndex, this.Tiles, this.Columns);
+         var allNeighbors = _neighboringTileFinder.GetAllNeighbors(tile.TileIndex, this.Tiles, this.Columns);
          if (tile.NumNeighborMines == allNeighbors.Count(t => t.IsMarked))
          {
             var tilesToReveal = allNeighbors.Where(t => !t.IsMarked && !t.IsRevealed);
@@ -235,6 +195,7 @@ namespace Minesweeper.Library
 
       private void PopulateTiles()
       {
+         Tiles = new List<Tile>();
          for (int i = 0; i < this.Rows * this.Columns; i++)
          {
             this.Tiles.Add(new Tile(i));
