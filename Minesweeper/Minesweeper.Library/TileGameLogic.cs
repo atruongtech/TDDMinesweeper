@@ -54,6 +54,22 @@ namespace Minesweeper.Library
          return returnTiles;
       }
 
+      public List<Tile> QuickRevealNeighbors(Tile tileClicked, List<Tile> allTiles, int columns, IGame control)
+      {
+         var returnTiles = allTiles;
+         var allNeighbors = _neighboringTileFinder.GetAllNeighbors(tileClicked.TileIndex, allTiles, columns);
+         if (tileClicked.NumNeighborMines == allNeighbors.Count(t => t.IsMarked))
+         {
+            var tilesToReveal = allNeighbors.Where(t => !t.IsMarked && !t.IsRevealed);
+            foreach (var toReveal in tilesToReveal)
+            {
+               returnTiles = RevealTiles(toReveal, allTiles, columns, control);
+            }
+         }
+
+         return returnTiles;
+      }
+
       private List<Tile> VisitNeighborTilesByQueue(Tile tile, List<Tile> tiles, int columns, IGame control)
       {
          Queue<Tile> checkQueue = new Queue<Tile>();
@@ -80,22 +96,6 @@ namespace Minesweeper.Library
          }
 
          return tiles;
-      }
-
-      public List<Tile> QuickRevealNeighbors(Tile tileClicked, List<Tile> allTiles, int columns, IGame control)
-      {
-         var returnTiles = allTiles;
-         var allNeighbors = _neighboringTileFinder.GetAllNeighbors(tileClicked.TileIndex, allTiles, columns);
-         if (tileClicked.NumNeighborMines == allNeighbors.Count(t => t.IsMarked))
-         {
-            var tilesToReveal = allNeighbors.Where(t => !t.IsMarked && !t.IsRevealed);
-            foreach (var toReveal in tilesToReveal)
-            {
-               returnTiles = RevealTiles(toReveal, allTiles, columns, control);
-            }
-         }
-
-         return returnTiles;
       }
    }
 }

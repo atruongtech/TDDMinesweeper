@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Minesweeper.Library
 {
@@ -7,50 +8,32 @@ namespace Minesweeper.Library
    {
       public List<Tile> GetAllNeighbors(int index, List<Tile> tiles, int columns)
       {
-         List<Tile> neighbors = new List<Tile>();
-         Func<int, bool> indexIsValid = IndexIsValidForNTiles(tiles.Count);
-
-         // top, middle, bottom
-         // left, middle, right
-         int topLeftIndex = index - columns - 1;
-         int topMiddleIndex = index - columns;
-         int topRightIndex = index - columns + 1;
-
-         int middleLeftIndex = index - 1;
-         int middleRightIndex = index + 1;
-
-         int bottomLeftIndex = index + columns - 1;
-         int bottomMiddleIndex = index + columns;
-         int bottomRightIndex = index + columns + 1;
+         var indicesToCheck = new List<int>(CalculateMiddleColumnIndices(index, columns));
 
          if (IndexIsNotInFirstColumn(index, columns))
-         {
-            neighbors.Add(tiles[middleLeftIndex]);
-
-            if (indexIsValid(topLeftIndex))
-               neighbors.Add(tiles[topLeftIndex]);
-            if (indexIsValid(bottomLeftIndex))
-               neighbors.Add(tiles[bottomLeftIndex]);
-         }
-
-         if (indexIsValid(topMiddleIndex))
-            neighbors.Add(tiles[topMiddleIndex]);
+            indicesToCheck.AddRange(CalculateLeftColumnIndices(index, columns));
 
          if (IndexIsNotInLastColumn(index, columns))
-         {
-            neighbors.Add(tiles[middleRightIndex]);
+            indicesToCheck.AddRange(CalculateRightColumnIndices(index, columns));
 
-            if (indexIsValid(topRightIndex))
-               neighbors.Add(tiles[topRightIndex]);
-            if (indexIsValid(bottomRightIndex))
-               neighbors.Add(tiles[bottomRightIndex]);
-         }
+         Func<int, bool> indexIsValid = IndexIsValidForNTiles(tiles.Count);
+         return indicesToCheck.Where(indexIsValid).Select(i => tiles[i]).ToList();
 
-         if (indexIsValid(bottomMiddleIndex))
-            neighbors.Add(tiles[bottomMiddleIndex]);
+      }
 
-         return neighbors;
+      private IEnumerable<int> CalculateRightColumnIndices(int index, int nColumns)
+      {
+         return new List<int> {index - nColumns + 1, index + 1, index + nColumns + 1};
+      }
 
+      private IEnumerable<int> CalculateLeftColumnIndices(int index, int nColumns)
+      {
+         return new List<int> { index - nColumns - 1, index - 1, index + nColumns - 1 };
+      }
+
+      private IEnumerable<int> CalculateMiddleColumnIndices(int index, int nColumns)
+      {
+         return new List<int> {index - nColumns, index + nColumns};
       }
 
       private static bool IndexIsNotInLastColumn(int index, int columns)
