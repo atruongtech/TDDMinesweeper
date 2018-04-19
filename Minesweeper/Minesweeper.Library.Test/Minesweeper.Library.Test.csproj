@@ -68,7 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameTest.cs" />
     <Compile Include="NeighboringMineFinderTest.cs" />
+    <Compile Include="TileGameLogicTest.cs" />
     <Compile Include="TileTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GameboardTest.cs" />

@@ -55,11 +55,14 @@ namespace Minesweeper
                     break;
             }
             this.Hide();
-
-            var board = new Gameboard(level, new NeighboringTileFinder());
-            board.InitializeGameBoard();
-            board.StartGame();
-            this.DataContext = board;
+            
+            var neighboringTileFinder = new NeighboringTileFinder();
+            var tileGameLogic = new TileGameLogic(neighboringTileFinder);
+            var settings = new DifficultySetting(level);
+            var gameboard = new Gameboard(settings);
+            var game = new Game(tileGameLogic, gameboard);
+            game.StartGame();
+            this.DataContext = game;
 
             ((BindableBase)this.DataContext).PropertyChanged += GameEndDelegate;
             this.Show();

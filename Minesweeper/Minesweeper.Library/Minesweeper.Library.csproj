@@ -57,12 +57,17 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\TileNumberColorConverter.cs" />
     <Compile Include="DifficultySetting.cs" />
-    <Compile Include="Gameboard.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Converters\InvertedBoolConverter.cs" />
+    <Compile Include="Gameboard.cs" />
+    <Compile Include="IGame.cs" />
+    <Compile Include="IGameboard.cs" />
     <Compile Include="INeighboringTileFinder.cs" />
+    <Compile Include="ITileGameLogic.cs" />
     <Compile Include="NeighboringTileFinder.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TileGameLogic.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
