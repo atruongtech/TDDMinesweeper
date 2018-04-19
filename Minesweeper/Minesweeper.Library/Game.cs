@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Prism.Mvvm;
@@ -12,7 +11,6 @@ namespace Minesweeper.Library
    public class Game : BindableBase, IGame
    {
       private int _numMines;
-      private DifficultySetting _settings;
       private bool _gameOver;
       private bool _win;
       private int _playTime;
@@ -20,22 +18,19 @@ namespace Minesweeper.Library
       private int _tilesLeft;
 
       private readonly ITileGameLogic _tileGameLogic;
-      private readonly IGameboard _gameboard;
+      private IGameboard _gameboard;
 
       #region properties
-      public int Rows => _gameboard.Rows;
-
-      public int Columns => _gameboard.Columns;
 
       public List<Tile> Tiles => _gameboard.Tiles;
+      public int TilesLeft => _tilesLeft;
+      public DifficultySetting Settings => _gameboard.Settings;
 
       public int NumMines
       {
          get => _numMines;
          private set => SetProperty(ref _numMines, value);
       }
-
-      public DifficultySetting Settings => _gameboard.Settings;
 
       public bool GameOver
       {
@@ -54,8 +49,6 @@ namespace Minesweeper.Library
          get => _playTime;
          private set => SetProperty(ref _playTime, value);
       }
-
-      public int TilesLeft => _tilesLeft;
 
       public DelegateCommand<Tile> RevealCommand { get; private set; }
 
@@ -88,12 +81,12 @@ namespace Minesweeper.Library
 
       private void SetNeighborMineCounts()
       {
-         _gameboard.With(_tileGameLogic.SetNeighborMineCounts(_gameboard.Tiles, _gameboard.Columns));
+         _gameboard = _gameboard.With(_tileGameLogic.SetNeighborMineCounts(_gameboard.Tiles, _gameboard.Columns));
       }
 
       public void RevealTiles(Tile tile)
       {
-         _gameboard.With(_tileGameLogic.RevealTiles(tile, _gameboard.Tiles, _gameboard.Columns, this));
+         _gameboard = _gameboard.With(_tileGameLogic.RevealTiles(tile, _gameboard.Tiles, _gameboard.Columns, this));
       }
 
       public void ToggleTileMarked(Tile tile)
@@ -110,7 +103,7 @@ namespace Minesweeper.Library
 
       public void QuickRevealNeighbors(Tile tile)
       {
-         _gameboard.With(_tileGameLogic.QuickRevealNeighbors(tile, _gameboard.Tiles, _gameboard.Columns, this));
+         _gameboard = _gameboard.With(_tileGameLogic.QuickRevealNeighbors(tile, _gameboard.Tiles, _gameboard.Columns, this));
       }
 
       private void StartPlayTimer()
