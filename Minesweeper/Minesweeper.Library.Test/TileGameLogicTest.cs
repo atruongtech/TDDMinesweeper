@@ -171,5 +171,26 @@ namespace Minesweeper.Library.Test
 
          mockGame.Verify(g => g.EndGame(false), Times.Once);
       }
+
+      [Test]
+      public void ToggleTileMarked_Sets_NumMines_Appropriately()
+      {
+         var nMines = 5;
+         var tiles = new List<Tile>();
+         for (var i = 0; i < nMines; i++)
+            tiles.Add(new Tile() { IsMine = true });
+
+         var mockGame = new Mock<IGame>();
+         mockGame.Setup(g => g.NumMines).Returns(nMines);
+         mockGame.Setup(g => g.DecrementMineCounter()).Callback(() => nMines--);
+         mockGame.Setup(g => g.IncrementMineCounter()).Callback(() => nMines++);
+
+         var tileGameLogic = new TileGameLogic(Mock.Of<INeighboringTileFinder>());
+
+         tileGameLogic.ToggleTileMarked(tiles[1], mockGame.Object);
+         Assert.AreEqual(4, nMines);
+         tileGameLogic.ToggleTileMarked(tiles[1], mockGame.Object);
+         Assert.AreEqual(5, nMines);
+      }
    }
 }

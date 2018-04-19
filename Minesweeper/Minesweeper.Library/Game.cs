@@ -91,14 +91,7 @@ namespace Minesweeper.Library
 
       public void ToggleTileMarked(Tile tile)
       {
-         if (tile.IsMarked)
-            this.NumMines++;
-         else if (this.NumMines < 1)
-            return;
-         else
-            this.NumMines--;
-
-         tile.ToggleMark();
+         _tileGameLogic.ToggleTileMarked(tile, this);
       }
 
       public void QuickRevealNeighbors(Tile tile)
@@ -148,6 +141,16 @@ namespace Minesweeper.Library
       public void IncrementTileCounter()
       {
          _tilesLeft++;
+      }
+
+      public void IncrementMineCounter()
+      {
+         NumMines++;
+      }
+
+      public void DecrementMineCounter()
+      {
+         NumMines--;
       }
    }
 }

@@ -26,24 +26,6 @@ namespace Minesweeper.Library.Test
       }
 
       [Test]
-      public void ToggleTileMarked_Sets_NumMines_Appropriately()
-      {
-         var nMines = 5;
-         var tiles = new List<Tile>();
-         for (var i = 0; i < nMines; i++)
-            tiles.Add(new Tile() { IsMine = true });
-
-         var mockGameboard = new Mock<IGameboard>();
-         mockGameboard.Setup(gb => gb.Tiles).Returns(tiles);
-         Game board = new Game(Mock.Of<ITileGameLogic>(), mockGameboard.Object);
-
-         Assert.AreEqual(nMines, board.NumMines);
-
-         board.ToggleTileMarked(board.Tiles[1]);
-         Assert.AreEqual(nMines - 1, board.NumMines);
-      }
-
-      [Test]
       public void PropertyChanged_EventFires_When_Win_Set_True()
       {
          var gameboard = new Gameboard(new DifficultySetting(DifficultyLevel.Easy));

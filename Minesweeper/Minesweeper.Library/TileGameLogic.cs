@@ -70,6 +70,18 @@ namespace Minesweeper.Library
          return returnTiles;
       }
 
+      public void ToggleTileMarked(Tile tile, IGame control)
+      {
+         if (tile.IsMarked)
+            control.IncrementMineCounter();
+         else if (control.NumMines < 1)
+            return;
+         else
+            control.DecrementMineCounter();
+
+         tile.ToggleMark();
+      }
+
       private List<Tile> VisitNeighborTilesByQueue(Tile tile, List<Tile> tiles, int columns, IGame control)
       {
          Queue<Tile> checkQueue = new Queue<Tile>();
